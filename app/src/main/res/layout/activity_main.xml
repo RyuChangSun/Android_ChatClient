@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sunrc.clientchat.MainActivity">
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="900px"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="130px"
+        android:layout_marginTop="120px"
+        >
+        <TableRow>
+            <TextView android:text="My Fun Chat 01"
+                android:layout_span="2"
+                android:textSize="8pt"
+                android:textColor="#ffff7825"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Host :"/>
+            <EditText android:id="@+id/chat_host"
+                android:text="10.0.3.2"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="Port :"/>
+            <EditText android:id="@+id/chat_port"
+                android:text="9999"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:text="NicName :"/>
+            <EditText android:id="@+id/chat_name"/>
+        </TableRow>
+        <TableRow>
+            <Button android:layout_span="2"
+                android:id="@+id/chat_btn"
+                android:text="Connect"
+                />
+        </TableRow>
+    </TableLayout>
+</android.support.constraint.ConstraintLayout>
