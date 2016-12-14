@@ -5,7 +5,8 @@
     android:id="@+id/activity_chat_room"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sunrc.clientchat.ChatRoom">
+    android:orientation="vertical"
+    tools:context="com.sunrc.clientchat.ChatMain">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="0dp"
@@ -20,20 +21,6 @@
             android:layout_height="468dp"
             android:orientation="vertical">
 
-            <!--TextView
-                android:id="@+id/textView"
-                android:layout_width="260dp"
-                android:layout_height="87dp"
-                android:text="ChatRoom Activity"
-                tools:layout_editor_absoluteX="71dp"
-                tools:layout_editor_absoluteY="83dp" /-->
-
-            <Button
-                android:id="@+id/chat_exitBtn"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:text="나가기" />
-
             <ListView
                 android:id="@+id/chat_list"
                 android:layout_width="match_parent"
@@ -41,7 +28,7 @@
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
-        <TableLayout
+        <!--TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:stretchColumns="0">
@@ -54,7 +41,7 @@
                     android:id="@+id/chat_msgBtn"
                     android:text="Send" />
             </TableRow>
-        </TableLayout>
+        </TableLayout-->
 
     </LinearLayout>
 

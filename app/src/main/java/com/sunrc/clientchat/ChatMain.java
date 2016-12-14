@@ -1,13 +1,16 @@
 package com.sunrc.clientchat;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,27 +26,30 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
-public class ChatRoom extends AppCompatActivity {
+public class ChatMain extends AppCompatActivity implements ListViewAdapter.ListBtnClickListener{
 
     private Socket s;
     private Handler networkdHandler;
-    private EditText chatMsg;
-    private Button chatBtn;
-    private Button exitBtn;
+//    private EditText chatMsg;
+//    private Button chatBtn;
     private PrintWriter pw;
-    static String namev = "";
     private BufferedReader in;
+    static String namev = "";
     @SuppressLint("NewApi")
     private ArrayList<String> msgPool;
     private ArrayList<String> userListPool;
     private ListView list;
 
+    // 개인별 메핑에 따라 배열로 처리 해야 함
+    private boolean isChatRoom = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_room);
+        setContentView(R.layout.activity_chat_main);
 
         Log.i("알림","ChatMain onCreate");
 
@@ -52,17 +58,14 @@ public class ChatRoom extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
         }
 
-        exitBtn = (Button)findViewById(R.id.chat_exitBtn);
-
         list = (ListView)findViewById(R.id.chat_list);
-        chatMsg = (EditText)findViewById(R.id.chat_msg);
-        chatBtn = (Button)findViewById(R.id.chat_msgBtn);
+//        chatMsg = (EditText)findViewById(R.id.chat_msg);
+//        chatBtn = (Button)findViewById(R.id.chat_msgBtn);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         String hostv = bundle.getString("host");
         final String namev = bundle.getString("name");
-        String message = bundle.getString("message");
 
         Log.i("알림", namev);
 
@@ -74,15 +77,7 @@ public class ChatRoom extends AppCompatActivity {
         testServer(hostv, namev, portv);
         chatResponse(namev);
 
-        if (message != null && !message.isEmpty())
-        {
-            msgPool.add(message);
-            /*ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChatRoom.this, android.R.layout.simple_list_item_1, msgPool);
-            list.setAdapter(adapter);
-            msgPool.clear();*/
-        }
-
-        chatBtn.setOnClickListener(new View.OnClickListener() {
+/*        chatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String msg = chatMsg.getText().toString().trim();
@@ -90,40 +85,14 @@ public class ChatRoom extends AppCompatActivity {
                 chatMsg.setText("");
                 chatMsg.requestFocus();
             }
-        });
-
-        exitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "나가기", Toast.LENGTH_LONG).show();
-
-                try
-                {
-                    pw = new PrintWriter(new BufferedOutputStream(s.getOutputStream()),true);
-                    pw.println("room/chat/all/"+namev+"/");
-
-                    s.close();
-                }
-                catch (Exception e)
-                {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-
-    protected void onResume() {
-        super.onResume();
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChatRoom.this, android.R.layout.simple_list_item_1, msgPool);
-            list.setAdapter(adapter);
+        });*/
     }
 
     private boolean testServer(String hostv, String namev, int portv) {
         try {
             s = new Socket(hostv,portv);
             pw = new PrintWriter(new BufferedOutputStream(s.getOutputStream()),true);
-            //pw.println("room/chat/all/"+namev+"/");
+            pw.println("room/chat/all/"+namev+"/");
 
             Log.i("알림","testServer");
 
@@ -157,9 +126,9 @@ public class ChatRoom extends AppCompatActivity {
 
                         if (protocol1.equals("UserList"))
                         {
-                            /*Log.i("nickName", nickName);
+                            Log.i("nickName", nickName);
 
-                            //msgPool.clear();
+                            userListPool.clear();
 
                             String tmpValue;
                             for(int i=0; i<=stz.countTokens(); i++) {
@@ -168,7 +137,7 @@ public class ChatRoom extends AppCompatActivity {
                                 {
                                     userListPool.add(tmpValue);
                                 }
-                            }*/
+                            }
                         }
                         else if (protocol1.equals("talk"))
                         {
@@ -188,7 +157,7 @@ public class ChatRoom extends AppCompatActivity {
                         networkdHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                /*if(protocol1.equals("UserList")) {
+                                if(protocol1.equals("UserList")) {
 
                                     ListViewAdapter adapter;
                                     ArrayList<ListViewItem> items = new ArrayList<ListViewItem>() ;
@@ -197,15 +166,38 @@ public class ChatRoom extends AppCompatActivity {
                                     loadItemsFromDB(items, userListPool);
 
                                     // Adapter 생성
-                                    adapter = new ListViewAdapter(ChatRoom.this, R.layout.activity_chat_userlist, items, ChatRoom.this);
+                                    adapter = new ListViewAdapter(ChatMain.this, R.layout.activity_chat_userlist, items, ChatMain.this);
 
                                     //ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChatMain.this, android.R.layout.simple_list_item_1, userListPool);
                                     list.setAdapter(adapter);
-                                }*/
+                                }
 
                                 if(protocol1.equals("talk")) {
-                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChatRoom.this, android.R.layout.simple_list_item_1, msgPool);
-                                    list.setAdapter(adapter);
+                                    //ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChatMain.this, android.R.layout.simple_list_item_1, msgPool);
+                                    //list.setAdapter(adapter);
+
+                                    if (!isChatRoom)
+                                    {
+                                        Intent intent = new Intent(ChatMain.this, ChatRoom.class);
+
+                                        Intent preIntent = getIntent();
+                                        Bundle bundle2 = preIntent.getExtras();
+                                        String hostv = bundle2.getString("host");
+                                        int portv = bundle2.getInt("port");
+                                        String namev = bundle2.getString("name");
+                                        String message = msgPool.get(0);
+
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("host", hostv);
+                                        bundle.putString("name", namev);
+                                        bundle.putInt("port", portv);
+                                        bundle.putString("message", message);
+
+                                        intent.putExtras(bundle);
+                                        startActivity(intent);
+
+                                        isChatRoom = true;
+                                    }
                                 }
                             }
                         });
@@ -235,6 +227,33 @@ public class ChatRoom extends AppCompatActivity {
             i++;
         }
 
-        return true;
+        return true ;
+    }
+
+    @Override
+    public void onListBtnClick(int position) {
+
+        Intent intent = new Intent(ChatMain.this, ChatRoom.class);
+
+        Intent preIntent = getIntent();
+        Bundle bundle2 = preIntent.getExtras();
+        String hostv = bundle2.getString("host");
+        int portv = bundle2.getInt("port");
+        String namev = bundle2.getString("name");
+        String message = "";
+
+        Bundle bundle = new Bundle();
+        bundle.putString("host", hostv);
+        bundle.putString("name", namev);
+        bundle.putInt("port", portv);
+        bundle.putString("message", message);
+
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+        // 맵핑에 따라 배열로 처리해야됨
+        isChatRoom = true;
+
+//        Toast.makeText(this, Integer.toString(position+1) + "번 아이템이 선택되었습니다.", Toast.LENGTH_SHORT).show() ;
     }
 }

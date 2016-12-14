@@ -3,7 +3,6 @@ package com.sunrc.clientchat;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
                 portv = Integer.parseInt(port.getText().toString().trim());
                 namev = name.getText().toString().trim();
 
-                Intent intent = new Intent(MainActivity.this, ChatRoom.class);
+                Intent intent = new Intent(MainActivity.this, ChatMain.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("host", hostv);
                 bundle.putString("name", namev);
